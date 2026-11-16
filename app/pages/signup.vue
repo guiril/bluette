@@ -35,7 +35,7 @@ const formErrorMessage = computed(() =>
     <header>
       <div class="page-container pt-8 max-sm:pt-5 pb-3">
         <NuxtLink to="/" class="block w-fit">
-          <img src="/logo.svg" alt="Bookvault" class="block h-10 w-auto" />
+          <AppLogo class="block h-10" />
         </NuxtLink>
       </div>
     </header>
@@ -166,7 +166,7 @@ const formErrorMessage = computed(() =>
               <p
                 class="font-sans text-ui-caption text-center text-text-secondary"
               >
-                建立帳號，表示您同意 Bookvault 的
+                建立帳號，表示您同意 Bluette 的
                 <a
                   href="#"
                   class="font-medium text-text-primary underline"

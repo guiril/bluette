@@ -19,9 +19,9 @@ const showPassword = ref(false);
 
 <template>
   <div class="flex min-h-screen flex-col bg-bg">
-    <header class="flex items-center bg-primary px-6 py-4">
+    <header class="flex items-center px-6 py-4">
       <NuxtLink to="/" class="p-2">
-        <img src="/logo-white.svg" alt="Bookvault" class="h-4.5 w-auto" />
+        <AppLogo class="h-8" />
       </NuxtLink>
     </header>
     <div class="flex flex-1 items-center justify-center px-6">

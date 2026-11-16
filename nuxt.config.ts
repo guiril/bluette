@@ -11,6 +11,7 @@ export default defineNuxtConfig({
   },
   app: {
     head: {
+      title: 'Bluette',
       link: [
         {
           rel: 'stylesheet',
@@ -18,8 +19,18 @@ export default defineNuxtConfig({
         },
         {
           rel: 'icon',
+          type: 'image/png',
+          sizes: '32x32',
+          href: '/favicon-32.png',
+        },
+        {
+          rel: 'icon',
           type: 'image/svg+xml',
           href: '/favicon.svg',
+        },
+        {
+          rel: 'apple-touch-icon',
+          href: '/apple-touch-icon.png',
         },
       ],
     },

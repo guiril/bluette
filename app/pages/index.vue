@@ -9,7 +9,7 @@ definePageMeta({
     class="flex min-h-screen flex-col items-center justify-center gap-4 bg-bg px-6 text-center"
   >
     <h1 class="mb-2">
-      <img src="/logo.svg" alt="Bookvault" class="h-16 w-auto" />
+      <AppLogo class="h-16" />
     </h1>
     <p class="mb-10 text-ink-soft">記錄你的閱讀里程，寫下當下的心得。</p>
     <NuxtLink

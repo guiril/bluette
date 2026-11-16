@@ -1,0 +1,9 @@
+<template>
+  <img
+    src="/images/logo.svg"
+    alt="Bluette"
+    width="139"
+    height="32"
+    class="w-auto"
+  />
+</template>

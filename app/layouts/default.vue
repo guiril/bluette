@@ -16,7 +16,7 @@ const handleLogout = async () => {
         class="page-container h-16 max-sm:h-14 flex items-center justify-between"
       >
         <NuxtLink to="/my-books">
-          <img src="/logo.svg" alt="Bookvault" class="h-10 w-auto" />
+          <AppLogo class="h-10" />
         </NuxtLink>
         <button
           type="button"
