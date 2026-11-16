@@ -120,7 +120,7 @@
 }
 
 @utility page-container {
-  @apply max-w-280 box-content mx-auto px-8 max-sm:px-5;
+  @apply mx-auto box-content max-w-300 px-5 md:px-6 lg:px-8;
 }
 
 body {
