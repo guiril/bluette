@@ -5,7 +5,7 @@ type ButtonSize = 'md' | 'lg';
 
 const sizeClasses: Record<ButtonSize, string> = {
   md: 'h-10 px-4 text-ui-label max-sm:text-ui-label-lg',
-  lg: 'h-12 px-5 text-ui-label-lg',
+  lg: 'h-12 px-4 text-body-md',
 };
 
 const {
@@ -27,7 +27,7 @@ const {
   <NuxtLink
     v-if="to"
     :to="to"
-    class="flex items-center justify-center gap-2 font-sans rounded-sm bg-button-primary-bg text-button-primary-text outline-offset-2 outline-button-focus transition-colors hover:bg-button-primary-bg-hover focus-visible:outline-2 active:bg-button-primary-bg-pressed"
+    class="flex items-center justify-center gap-2 font-sans text-text-on-inverse rounded-md bg-button-primary-bg-rest shadow-xs outline-none hover:bg-button-primary-bg-hover focus-visible:bg-button-primary-bg-active focus-visible:shadow-none"
     :class="sizeClasses[size]"
   >
     <slot />
@@ -37,10 +37,19 @@ const {
     :type="type"
     :disabled="disabled"
     :aria-busy="isLoading"
-    class="flex items-center justify-center gap-2 font-sans rounded-sm bg-button-primary-bg text-button-primary-text outline-offset-2 outline-button-focus cursor-pointer transition-colors enabled:hover:bg-button-primary-bg-hover focus-visible:outline-2 enabled:active:bg-button-primary-bg-pressed disabled:bg-button-disabled-bg disabled:text-button-disabled-text disabled:cursor-not-allowed"
+    class="flex items-center justify-center gap-2 font-sans text-text-on-inverse rounded-md bg-button-primary-bg-rest shadow-xs outline-none cursor-pointer enabled:hover:bg-button-primary-bg-hover focus-visible:bg-button-primary-bg-active focus-visible:shadow-none disabled:text-text-disabled disabled:bg-control-bg-disabled disabled:cursor-not-allowed"
     :class="sizeClasses[size]"
   >
-    <AppSpinner v-if="isLoading" size="sm" />
-    <slot />
+    <template v-if="isLoading">
+      <img
+        src="/images/icons/spinner.svg"
+        alt=""
+        width="20"
+        height="20"
+        class="animate-spin"
+      />
+      <span class="sr-only"><slot /></span>
+    </template>
+    <slot v-else />
   </button>
 </template>
