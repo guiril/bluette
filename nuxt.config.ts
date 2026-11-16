@@ -40,6 +40,12 @@ export default defineNuxtConfig({
   },
   icon: {
     cssLayer: 'base',
+    customCollections: [
+      {
+        prefix: 'bluette',
+        dir: './app/assets/icons',
+      },
+    ],
   },
   supabase: {
     cookieOptions: {

@@ -41,13 +41,7 @@ const {
     :class="sizeClasses[size]"
   >
     <template v-if="isLoading">
-      <img
-        src="/images/icons/spinner.svg"
-        alt=""
-        width="20"
-        height="20"
-        class="animate-spin"
-      />
+      <Icon name="bluette:spinner" class="size-5 animate-spin" />
       <span class="sr-only"><slot /></span>
     </template>
     <slot v-else />
