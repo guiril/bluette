@@ -77,9 +77,9 @@ watch(
           @click="openMenu"
         >
           <span class="flex w-5 flex-col items-end gap-1.25">
-            <span class="h-[0.09375rem] w-5 rounded-xs bg-fg-default" />
-            <span class="h-[0.09375rem] w-3.5 rounded-xs bg-fg-default" />
-            <span class="h-[0.09375rem] w-2.5 rounded-xs bg-fg-default" />
+            <span class="h-[1.5px] w-5 rounded-xs bg-fg-default" />
+            <span class="h-[1.5px] w-3.5 rounded-xs bg-fg-default" />
+            <span class="h-[1.5px] w-2.5 rounded-xs bg-fg-default" />
           </span>
         </button>
       </div>
