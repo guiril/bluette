@@ -6,6 +6,8 @@ definePageMeta({
 const {
   email,
   password,
+  emailErrorMessage,
+  passwordErrorMessage,
   errorMessage,
   isSubmitting,
   isGuestLoggingIn,
@@ -14,111 +16,131 @@ const {
   handleGuestLogin,
 } = useAuthForm('login');
 
+const emailField = useTemplateRef('emailField');
+
 const showPassword = ref(false);
+
+const canSubmit = computed(
+  () => Boolean(email.value && password.value) && !isGuestLoggingIn.value,
+);
+
+const clearEmail = () => {
+  email.value = '';
+  emailField.value?.focus();
+};
 </script>
 
 <template>
-  <div class="flex min-h-screen flex-col bg-bg">
-    <header class="flex items-center px-6 py-4">
-      <NuxtLink to="/" class="p-2">
-        <AppLogo class="h-8" />
+  <div
+    class="flex min-h-screen flex-col px-5 py-10 font-sans bg-bg-default md:items-center md:justify-center md:gap-30"
+  >
+    <div
+      class="flex w-full flex-1 flex-col gap-14 md:w-97.5 md:flex-none md:gap-16 lg:w-100 lg:gap-18"
+    >
+      <NuxtLink to="/" class="w-fit">
+        <AppLogo class="h-8 md:h-10" />
       </NuxtLink>
-    </header>
-    <div class="flex flex-1 items-center justify-center px-6">
-      <form
-        class="flex w-full max-w-sm flex-col gap-4 rounded-lg border border-line bg-surface p-8 shadow-sm"
-        @submit.prevent="handleSubmit"
-      >
-        <h1 class="font-display text-2xl font-bold text-ink text-center">
-          登入
-        </h1>
-        <div class="flex flex-col gap-1">
-          <label for="email" class="text-sm font-medium text-ink">Email</label>
-          <input
-            id="email"
-            v-model="email"
-            type="email"
-            autocomplete="email"
-            required
-            class="rounded-md border border-line px-3 py-2 text-ink focus:border-primary focus:outline-none"
-          />
+      <div class="flex flex-col gap-6">
+        <div class="flex flex-col gap-1.5 md:gap-2 lg:gap-2.5">
+          <h1
+            class="font-serif text-accent-md tracking-[0.01em] text-text-default md:text-accent-lg md:tracking-[0.02em] lg:text-accent-xl lg:tracking-normal"
+          >
+            歡迎你回來
+          </h1>
+          <p class="text-body-sm text-text-muted md:text-body-md">
+            讀到心動的句子，把它寫成一則筆記
+          </p>
         </div>
-        <div class="flex flex-col gap-1">
-          <label for="password" class="text-sm font-medium text-ink">
-            密碼
-          </label>
-          <div class="relative">
-            <input
+        <form
+          novalidate
+          class="flex flex-col gap-8"
+          @submit.prevent="handleSubmit"
+        >
+          <div class="flex flex-col gap-4">
+            <AppTextField
+              id="email"
+              ref="emailField"
+              v-model="email"
+              label="Email"
+              type="email"
+              autocomplete="email"
+              placeholder="name@example.com"
+              :error-message="emailErrorMessage"
+            >
+              <template #trailing>
+                <button
+                  v-if="email"
+                  type="button"
+                  aria-label="清除 Email"
+                  class="flex p-2.5 text-fg-default cursor-pointer"
+                  @mousedown.prevent
+                  @click="clearEmail"
+                >
+                  <Icon name="bluette:clear" class="size-5" />
+                </button>
+              </template>
+            </AppTextField>
+            <AppTextField
               id="password"
               v-model="password"
+              label="密碼"
               :type="showPassword ? 'text' : 'password'"
               autocomplete="current-password"
-              required
-              class="w-full rounded-md border border-line px-3 py-2 pr-10 text-ink focus:border-primary focus:outline-none"
-            />
-            <button
-              type="button"
-              :aria-label="showPassword ? '隱藏密碼' : '顯示密碼'"
-              :title="showPassword ? '隱藏密碼' : '顯示密碼'"
-              class="absolute inset-y-0 right-0 flex cursor-pointer items-center px-3 text-ink-soft hover:text-primary"
-              @click="showPassword = !showPassword"
+              placeholder="輸入密碼"
+              :error-message="passwordErrorMessage"
             >
-              <Icon
-                :name="
-                  showPassword
-                    ? 'material-symbols:visibility-off-outline'
-                    : 'material-symbols:visibility-outline'
-                "
-                class="size-5"
-                aria-hidden="true"
-              />
-            </button>
+              <template #trailing>
+                <button
+                  type="button"
+                  :aria-label="showPassword ? '隱藏密碼' : '顯示密碼'"
+                  class="pr-2 text-body-sm font-medium tracking-[0.01em] text-text-muted cursor-pointer"
+                  @mousedown.prevent
+                  @click="showPassword = !showPassword"
+                >
+                  {{ showPassword ? '隱藏' : '顯示' }}
+                </button>
+              </template>
+            </AppTextField>
           </div>
-        </div>
-        <p v-if="errorMessage" class="text-sm text-red-600">
-          {{ errorMessage }}
-        </p>
-        <button
-          type="submit"
-          class="relative cursor-pointer rounded-md bg-primary py-2.5 font-display font-semibold text-white transition-colors hover:bg-primary-hover disabled:cursor-not-allowed disabled:bg-ink-soft"
-          :disabled="isBusy"
-          :aria-busy="isSubmitting"
-        >
-          <span :class="{ invisible: isSubmitting }">登入</span>
-          <span
-            v-if="isSubmitting"
-            class="absolute inset-0 flex items-center justify-center"
-          >
-            <AppSpinner size="sm" />
-          </span>
-        </button>
+          <div class="flex flex-col gap-4">
+            <p
+              v-if="errorMessage"
+              role="alert"
+              class="text-ui-caption text-text-danger"
+            >
+              {{ errorMessage }}
+            </p>
+            <AppButton
+              type="submit"
+              :is-loading="isSubmitting"
+              :disabled="!canSubmit"
+              class="w-full"
+            >
+              立即登入
+            </AppButton>
+          </div>
+        </form>
+      </div>
+    </div>
+    <div class="flex w-full items-center justify-between md:w-97.5 lg:w-100">
+      <p class="flex items-center gap-1 text-body-sm text-text-muted">
+        還沒有帳號？
         <NuxtLink
           to="/signup"
-          class="text-center text-sm text-ink-soft hover:text-primary"
+          class="font-medium tracking-[0.01em] text-text-default underline"
         >
-          還沒有帳號？建立帳號
+          建立帳號
         </NuxtLink>
-        <div class="flex items-center gap-3">
-          <div class="h-px flex-1 bg-line" />
-          <span class="text-xs text-ink-soft">或</span>
-          <div class="h-px flex-1 bg-line" />
-        </div>
-        <button
-          type="button"
-          class="relative cursor-pointer rounded-md border border-line py-2.5 font-display font-semibold text-ink transition-colors enabled:hover:border-primary enabled:hover:text-primary disabled:cursor-not-allowed disabled:text-ink-soft"
-          :disabled="isBusy"
-          :aria-busy="isGuestLoggingIn"
-          @click="handleGuestLogin"
-        >
-          <span :class="{ invisible: isGuestLoggingIn }">以訪客身分試用</span>
-          <span
-            v-if="isGuestLoggingIn"
-            class="absolute inset-0 flex items-center justify-center"
-          >
-            <AppSpinner size="sm" />
-          </span>
-        </button>
-      </form>
+      </p>
+      <button
+        type="button"
+        class="text-body-sm font-medium tracking-[0.01em] text-text-default underline cursor-pointer disabled:cursor-not-allowed"
+        :disabled="isBusy"
+        :aria-busy="isGuestLoggingIn"
+        @click="handleGuestLogin"
+      >
+        先逛逛，不用帳號
+      </button>
     </div>
   </div>
 </template>
