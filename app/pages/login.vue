@@ -17,6 +17,7 @@ const {
 } = useAuthForm('login');
 
 const emailField = useTemplateRef('emailField');
+const passwordField = useTemplateRef('passwordField');
 
 const showPassword = ref(false);
 
@@ -27,6 +28,21 @@ const canSubmit = computed(
 const clearEmail = () => {
   email.value = '';
   emailField.value?.focus();
+};
+
+const focusFirstError = async () => {
+  await nextTick();
+
+  if (emailErrorMessage.value || errorMessage.value) {
+    emailField.value?.focus();
+  } else if (passwordErrorMessage.value) {
+    passwordField.value?.focus();
+  }
+};
+
+const submitForm = async () => {
+  await handleSubmit();
+  await focusFirstError();
 };
 </script>
 
@@ -54,7 +70,7 @@ const clearEmail = () => {
         <form
           novalidate
           class="flex flex-col gap-8"
-          @submit.prevent="handleSubmit"
+          @submit.prevent="submitForm"
         >
           <div class="flex flex-col gap-4">
             <AppTextField
@@ -65,11 +81,12 @@ const clearEmail = () => {
               type="email"
               autocomplete="email"
               placeholder="name@example.com"
+              :disabled="isBusy"
               :error-message="emailErrorMessage"
             >
               <template #trailing>
                 <button
-                  v-if="email"
+                  v-if="email && !isBusy"
                   type="button"
                   aria-label="清除 Email"
                   class="flex p-2.5 text-fg-default cursor-pointer"
@@ -82,18 +99,21 @@ const clearEmail = () => {
             </AppTextField>
             <AppTextField
               id="password"
+              ref="passwordField"
               v-model="password"
               label="密碼"
               :type="showPassword ? 'text' : 'password'"
               autocomplete="current-password"
               placeholder="輸入密碼"
+              :disabled="isBusy"
               :error-message="passwordErrorMessage"
             >
               <template #trailing>
                 <button
                   type="button"
                   :aria-label="showPassword ? '隱藏密碼' : '顯示密碼'"
-                  class="pr-2 text-body-sm font-medium tracking-[0.01em] text-text-muted cursor-pointer"
+                  class="pr-2 text-body-sm font-medium tracking-[0.01em] text-text-muted cursor-pointer disabled:text-text-disabled disabled:cursor-not-allowed"
+                  :disabled="isBusy"
                   @mousedown.prevent
                   @click="showPassword = !showPassword"
                 >
