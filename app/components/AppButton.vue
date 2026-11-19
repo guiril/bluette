@@ -35,10 +35,15 @@ const {
   <button
     v-else
     :type="type"
-    :disabled="disabled"
+    :disabled="disabled || isLoading"
     :aria-busy="isLoading"
-    class="flex items-center justify-center gap-2 font-sans text-text-on-inverse rounded-md bg-button-primary-bg-rest shadow-xs outline-none cursor-pointer enabled:hover:bg-button-primary-bg-hover focus-visible:bg-button-primary-bg-active focus-visible:shadow-none disabled:text-text-disabled disabled:bg-control-bg-disabled disabled:cursor-not-allowed"
-    :class="sizeClasses[size]"
+    class="flex items-center justify-center gap-2 font-sans text-text-on-inverse rounded-md bg-button-primary-bg-rest shadow-xs outline-none cursor-pointer enabled:hover:bg-button-primary-bg-hover focus-visible:bg-button-primary-bg-active focus-visible:shadow-none"
+    :class="[
+      sizeClasses[size],
+      isLoading
+        ? 'disabled:cursor-default'
+        : 'disabled:text-text-disabled disabled:bg-control-bg-disabled disabled:cursor-not-allowed',
+    ]"
   >
     <template v-if="isLoading">
       <Icon name="bluette:spinner" class="size-5 animate-spin" />
