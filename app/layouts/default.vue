@@ -143,7 +143,7 @@ watch(
         </div>
       </DialogPanel>
     </Dialog>
-    <main class="flex flex-1 flex-col">
+    <main class="flex flex-col flex-1">
       <slot />
     </main>
   </div>
