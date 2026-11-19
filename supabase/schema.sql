@@ -1,4 +1,4 @@
--- bookvault schema + RLS policies
+-- Bluette schema + RLS policies
 -- Run this in the Supabase SQL Editor (Project → SQL Editor → New query).
 
 create table if not exists user_books (
