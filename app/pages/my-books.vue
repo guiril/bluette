@@ -202,5 +202,6 @@ const handleInfoError = (message: string) => {
       @error="handleNotesError"
     />
     <AppToast ref="toastRef" />
+    <NuxtPage />
   </div>
 </template>
