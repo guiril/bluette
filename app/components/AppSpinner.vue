@@ -15,7 +15,7 @@ const { size = 'md', label } = defineProps<{
 <template>
   <span :role="label ? 'status' : undefined" class="inline-flex">
     <Icon
-      name="material-symbols:progress-activity"
+      name="bluette:spinner"
       class="animate-spin"
       :class="spinnerSizeClass[size]"
     />
