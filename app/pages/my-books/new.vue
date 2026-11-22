@@ -1,13 +1,18 @@
 <script setup lang="ts">
-import type { BookDetails } from '~/types/database';
+import type { BookDetails, UserBook } from '~/types/database';
 
 import { Dialog, DialogPanel, DialogTitle } from '@headlessui/vue';
 
 const SEARCH_DEBOUNCE_MS = 400;
 const QUERY_TERM_PATTERN = /\p{Script=Han}|[^\s\p{Script=Han}]+/gu;
 
+const { userBooks } = defineProps<{
+  userBooks: UserBook[];
+}>();
+
 const emit = defineEmits<{
   bookAdded: [title: string];
+  openBook: [userBookId: string];
 }>();
 
 let latestSearchId = 0;
@@ -25,6 +30,18 @@ const hasSearched = ref(false);
 const searchErrorMessage = ref('');
 
 const searchInput = useTemplateRef<HTMLInputElement>('searchInput');
+
+const userBookIdByGoogleBooksId = computed(() => {
+  const userBookIds = new Map<string, string>();
+
+  for (const userBook of userBooks) {
+    if (userBook.google_books_id) {
+      userBookIds.set(userBook.google_books_id, userBook.id);
+    }
+  }
+
+  return userBookIds;
+});
 
 const clearSearchTimer = () => {
   if (!searchTimer) return;
@@ -124,6 +141,22 @@ const clearSearch = () => {
 
 const dismissKeyboard = () => {
   searchInput.value?.blur();
+};
+
+const findUserBookId = (googleBooksId: string | null) =>
+  googleBooksId
+    ? userBookIdByGoogleBooksId.value.get(googleBooksId)
+    : undefined;
+
+const selectBook = (book: BookDetails) => {
+  const userBookId = findUserBookId(book.google_books_id);
+
+  if (userBookId) {
+    emit('openBook', userBookId);
+    return;
+  }
+
+  addBook(book);
 };
 
 const addBook = async (book: BookDetails) => {
@@ -317,9 +350,9 @@ onBeforeUnmount(() => {
                   <button
                     type="button"
                     :disabled="addingBook !== null"
-                    class="flex w-full gap-4 px-5 py-2.5 text-left outline-none cursor-pointer md:px-6 md:py-3 lg:py-2.5 disabled:cursor-default enabled:hover:bg-bg-muted focus-visible:outline-2 focus-visible:-outline-offset-2 focus-visible:outline-button-focus"
+                    class="group flex w-full gap-4 px-5 py-2.5 text-left outline-none cursor-pointer md:px-6 md:py-3 lg:py-2.5 disabled:cursor-default enabled:hover:bg-bg-muted focus-visible:outline-2 focus-visible:-outline-offset-2 focus-visible:outline-button-focus"
                     :class="addingBook === book ? 'bg-bg-muted' : undefined"
-                    @click="addBook(book)"
+                    @click="selectBook(book)"
                   >
                     <img
                       v-if="book.cover_url"
@@ -357,6 +390,11 @@ onBeforeUnmount(() => {
                         {{ book.author || '作者不詳' }}
                       </span>
                     </span>
+                    <span
+                      v-if="findUserBookId(book.google_books_id)"
+                      class="py-1 px-2 ml-auto shrink-0 self-start text-ui-caption text-text-nav bg-bg-muted rounded-xs group-enabled:group-hover:bg-bg-default"
+                      >已在書庫</span
+                    >
                     <AppSpinner
                       v-if="addingBook === book"
                       size="sm"

@@ -83,6 +83,12 @@ const handleBookAdded = async (title: string) => {
   toastRef.value?.show(`成功新增《${title}》`);
 };
 
+// Opens the info modal until the book page is built.
+const handleOpenBook = async (userBookId: string) => {
+  await navigateTo('/my-books');
+  handleOpenInfo(userBookId);
+};
+
 const handleInfoError = (message: string) => {
   toastRef.value?.show(message);
 };
@@ -207,6 +213,10 @@ const handleInfoError = (message: string) => {
       @error="handleNotesError"
     />
     <AppToast ref="toastRef" />
-    <NuxtPage @book-added="handleBookAdded" />
+    <NuxtPage
+      :user-books="userBooks ?? []"
+      @book-added="handleBookAdded"
+      @open-book="handleOpenBook"
+    />
   </div>
 </template>
