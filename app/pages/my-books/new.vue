@@ -1,5 +1,4 @@
 <script setup lang="ts">
-import type { BookFormValues } from '~/components/BookConfirmForm.vue';
 import type { BookDetails } from '~/types/database';
 
 import { Dialog, DialogPanel, DialogTitle } from '@headlessui/vue';
@@ -7,19 +6,15 @@ import { Dialog, DialogPanel, DialogTitle } from '@headlessui/vue';
 const SEARCH_DEBOUNCE_MS = 400;
 const QUERY_TERM_PATTERN = /\p{Script=Han}|[^\s\p{Script=Han}]+/gu;
 
-const createBlankBookForm = (): BookFormValues => ({
-  title: '',
-  author: '',
-  cover_url: '',
-  description: '',
-});
+const emit = defineEmits<{
+  bookAdded: [title: string];
+}>();
 
 let latestSearchId = 0;
 let searchTimer: ReturnType<typeof setTimeout> | null = null;
 
-const bookForm = ref<BookFormValues>(createBlankBookForm());
-const isSubmitting = ref(false);
-const submitErrorMessage = ref('');
+const addingBook = ref<BookDetails | null>(null);
+const addErrorMessage = ref('');
 
 const searchQuery = ref('');
 const searchedQuery = ref('');
@@ -29,10 +24,7 @@ const isSearching = ref(false);
 const hasSearched = ref(false);
 const searchErrorMessage = ref('');
 
-const selectedGoogleBooksId = ref<string | null>(null);
-
 const searchInput = useTemplateRef<HTMLInputElement>('searchInput');
-const toastRef = useTemplateRef('toastRef');
 
 const clearSearchTimer = () => {
   if (!searchTimer) return;
@@ -50,6 +42,7 @@ const handleSearch = async () => {
 
   isSearching.value = true;
   searchErrorMessage.value = '';
+  addErrorMessage.value = '';
 
   const searchId = latestSearchId + 1;
   latestSearchId = searchId;
@@ -78,6 +71,7 @@ const resetSearch = () => {
   latestSearchId += 1;
   searchResults.value = [];
   searchErrorMessage.value = '';
+  addErrorMessage.value = '';
   isSearching.value = false;
   hasSearched.value = false;
 };
@@ -132,43 +126,25 @@ const dismissKeyboard = () => {
   searchInput.value?.blur();
 };
 
-const selectBook = (book: BookDetails) => {
-  selectedGoogleBooksId.value = book.google_books_id;
-  searchQuery.value = '';
-  searchResults.value = [];
-  hasSearched.value = false;
+const addBook = async (book: BookDetails) => {
+  if (addingBook.value) return;
 
-  bookForm.value = {
-    title: book.title,
-    author: book.author,
-    cover_url: book.cover_url ?? '',
-    description: book.description ?? '',
-  };
-
-  toastRef.value?.show('已帶入搜尋結果的資料');
-};
-
-const resetForm = () => {
-  selectedGoogleBooksId.value = null;
-  bookForm.value = createBlankBookForm();
-};
-
-const handleFormSubmit = async () => {
-  isSubmitting.value = true;
-  submitErrorMessage.value = '';
+  addingBook.value = book;
+  addErrorMessage.value = '';
 
   try {
     await $fetch('/api/user-books', {
       method: 'POST',
       body: {
-        google_books_id: selectedGoogleBooksId.value ?? undefined,
-        title: bookForm.value.title,
-        author: bookForm.value.author,
-        cover_url: bookForm.value.cover_url,
-        description: bookForm.value.description,
+        google_books_id: book.google_books_id,
+        title: book.title,
+        author: book.author,
+        cover_url: book.cover_url,
+        description: book.description,
       },
     });
 
+    emit('bookAdded', book.title);
     await navigateTo('/my-books');
   } catch (error) {
     const isAlreadyInLibrary =
@@ -176,11 +152,11 @@ const handleFormSubmit = async () => {
       'statusCode' in error &&
       error.statusCode === 409;
 
-    submitErrorMessage.value = isAlreadyInLibrary
+    addErrorMessage.value = isAlreadyInLibrary
       ? '這本書已經在書庫裡了'
       : '新增失敗，請稍後再試';
   } finally {
-    isSubmitting.value = false;
+    addingBook.value = null;
   }
 };
 
@@ -317,6 +293,13 @@ onBeforeUnmount(() => {
               v-else-if="searchResults.length > 0"
               class="pt-2 md:pt-4 lg:pt-2"
             >
+              <p
+                v-if="addErrorMessage"
+                role="alert"
+                class="mb-2 text-body-sm text-text-danger"
+              >
+                {{ addErrorMessage }}
+              </p>
               <!-- Shows how many results the API returned (capped at 8), not the total number of matches. -->
               <p
                 class="mb-2 text-body-sm text-text-muted md:mb-3 md:text-body-md lg:mb-2 lg:text-body-sm"
@@ -333,8 +316,10 @@ onBeforeUnmount(() => {
                 >
                   <button
                     type="button"
-                    class="flex w-full gap-4 px-5 py-2.5 text-left outline-none cursor-pointer md:px-6 md:py-3 lg:py-2.5 hover:bg-bg-muted focus-visible:outline-2 focus-visible:-outline-offset-2 focus-visible:outline-button-focus"
-                    @click="selectBook(book)"
+                    :disabled="addingBook !== null"
+                    class="flex w-full gap-4 px-5 py-2.5 text-left outline-none cursor-pointer md:px-6 md:py-3 lg:py-2.5 disabled:cursor-default enabled:hover:bg-bg-muted focus-visible:outline-2 focus-visible:-outline-offset-2 focus-visible:outline-button-focus"
+                    :class="addingBook === book ? 'bg-bg-muted' : undefined"
+                    @click="addBook(book)"
                   >
                     <img
                       v-if="book.cover_url"
@@ -372,6 +357,12 @@ onBeforeUnmount(() => {
                         {{ book.author || '作者不詳' }}
                       </span>
                     </span>
+                    <AppSpinner
+                      v-if="addingBook === book"
+                      size="sm"
+                      label="新增中"
+                      class="ml-auto shrink-0 self-center text-text-muted"
+                    />
                   </button>
                 </li>
               </ul>
@@ -406,12 +397,8 @@ onBeforeUnmount(() => {
                 手動新增書籍
               </AppButton>
             </div>
-            <p v-if="submitErrorMessage" class="mt-4 text-sm text-red-600">
-              {{ submitErrorMessage }}
-            </p>
           </div>
         </div>
-        <AppToast ref="toastRef" />
       </DialogPanel>
     </div>
   </Dialog>

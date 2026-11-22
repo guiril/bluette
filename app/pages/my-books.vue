@@ -78,6 +78,11 @@ const handleBookRemoved = (userBookId: string) => {
   toastRef.value?.show('已從書庫移除');
 };
 
+const handleBookAdded = async (title: string) => {
+  await refresh();
+  toastRef.value?.show(`成功新增《${title}》`);
+};
+
 const handleInfoError = (message: string) => {
   toastRef.value?.show(message);
 };
@@ -202,6 +207,6 @@ const handleInfoError = (message: string) => {
       @error="handleNotesError"
     />
     <AppToast ref="toastRef" />
-    <NuxtPage />
+    <NuxtPage @book-added="handleBookAdded" />
   </div>
 </template>
