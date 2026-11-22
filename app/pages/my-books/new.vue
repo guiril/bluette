@@ -128,6 +128,10 @@ const clearSearch = () => {
   searchInput.value?.focus();
 };
 
+const dismissKeyboard = () => {
+  searchInput.value?.blur();
+};
+
 const selectBook = (book: BookDetails) => {
   selectedGoogleBooksId.value = book.google_books_id;
   searchQuery.value = '';
@@ -210,10 +214,10 @@ onBeforeUnmount(() => {
       class="fixed inset-0 hidden bg-bg-backdrop lg:block"
     />
     <div
-      class="fixed inset-0 overflow-y-auto bg-bg-default lg:flex lg:items-start lg:justify-center lg:overflow-y-visible lg:pt-16 lg:bg-transparent"
+      class="fixed inset-0 bg-bg-default lg:flex lg:items-start lg:justify-center lg:pt-16 lg:bg-transparent"
     >
       <DialogPanel
-        class="relative flex min-h-full flex-col bg-bg-default lg:max-h-[min(47.5rem,calc(100dvh-8rem))] lg:min-h-0 lg:w-204 lg:pt-8 lg:pb-4 lg:rounded-xl"
+        class="relative flex h-full flex-col bg-bg-default lg:h-auto lg:max-h-[min(47.5rem,calc(100dvh-8rem))] lg:w-204 lg:pt-8 lg:pb-4 lg:rounded-xl"
       >
         <header
           class="page-container flex items-center justify-between pt-3 pb-2.5 md:pt-4 md:pb-3 lg:py-0"
@@ -279,7 +283,10 @@ onBeforeUnmount(() => {
             </button>
           </div>
         </form>
-        <div class="lg:min-h-0 lg:overflow-y-auto">
+        <div
+          class="min-h-0 flex-1 overflow-y-auto"
+          @touchmove.passive="dismissKeyboard"
+        >
           <div
             v-if="!hasSearched && !isSearching"
             class="flex justify-center px-10 py-12 md:py-16 lg:pt-3 lg:pb-6"
