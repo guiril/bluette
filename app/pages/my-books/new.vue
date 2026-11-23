@@ -4,7 +4,6 @@ import { Dialog, DialogPanel, DialogTitle } from '@headlessui/vue';
 
 const SEARCH_PATH = '/my-books/new';
 const SEARCH_DEBOUNCE_MS = 400;
-const QUERY_TERM_PATTERN = /\p{Script=Han}|[^\s\p{Script=Han}]+/gu;
 
 const { userBooks } = defineProps<{
   userBooks: UserBook[];
@@ -96,43 +95,6 @@ const resetSearch = () => {
   addErrorMessage.value = '';
   isSearching.value = false;
   hasSearched.value = false;
-};
-
-const splitTitleByQuery = (title: string) => {
-  const queryTerms =
-    searchedQuery.value.toLowerCase().match(QUERY_TERM_PATTERN) ?? [];
-
-  if (queryTerms.length === 0) return [{ text: title, isMatch: false }];
-
-  const lowerTitle = title.toLowerCase();
-  const isMatchedAt = Array.from({ length: title.length }, () => false);
-
-  for (const term of queryTerms) {
-    let matchIndex = lowerTitle.indexOf(term);
-
-    while (matchIndex !== -1) {
-      for (let offset = 0; offset < term.length; offset += 1) {
-        isMatchedAt[matchIndex + offset] = true;
-      }
-
-      matchIndex = lowerTitle.indexOf(term, matchIndex + term.length);
-    }
-  }
-
-  const segments: { text: string; isMatch: boolean }[] = [];
-
-  for (let index = 0; index < title.length; index += 1) {
-    const isMatch = isMatchedAt[index] ?? false;
-    const lastSegment = segments.at(-1);
-
-    if (lastSegment && lastSegment.isMatch === isMatch) {
-      lastSegment.text += title[index];
-    } else {
-      segments.push({ text: title[index] ?? '', isMatch });
-    }
-  }
-
-  return segments;
 };
 
 const closeDialog = () => {
@@ -409,13 +371,15 @@ onBeforeUnmount(() => {
                           <span
                             v-for="(segment, segmentIndex) in splitTitleByQuery(
                               book.title,
+                              searchedQuery,
                             )"
                             :key="segmentIndex"
                             :class="
                               segment.isMatch ? 'text-text-brand' : undefined
                             "
-                            >{{ segment.text }}</span
                           >
+                            {{ segment.text }}
+                          </span>
                         </span>
                         <span
                           class="text-ui-caption text-text-muted md:text-body-sm"
