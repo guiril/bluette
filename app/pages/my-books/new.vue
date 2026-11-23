@@ -140,6 +140,7 @@ watch(searchQuery, () => {
       <DialogPanel
         class="relative flex h-full flex-col bg-bg-default lg:h-auto lg:max-h-[min(47.5rem,calc(100dvh-8rem))] lg:pt-8 lg:rounded-xl"
         :class="isManualMode ? 'lg:w-130 lg:pb-6' : 'lg:w-204 lg:pb-4'"
+        @keydown="preventImeEscape"
       >
         <header
           class="page-container flex items-center justify-between pt-3 pb-2.5 md:pt-4 md:pb-3 lg:py-0"

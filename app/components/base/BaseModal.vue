@@ -64,6 +64,7 @@ const emit = defineEmits<{
           <DialogPanel
             class="flex max-h-[min(900px,100%)] w-full flex-col rounded-xl bg-surface text-ink"
             :class="sizeClass[size]"
+            @keydown="preventImeEscape"
           >
             <div
               class="flex items-start justify-between gap-3 px-5.5 pt-5.5 pb-2"
