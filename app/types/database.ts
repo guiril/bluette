@@ -33,3 +33,7 @@ export interface Note {
   created_at: string;
   updated_at: string;
 }
+
+export interface UserBookWithNotes extends UserBook {
+  notes: Note[];
+}

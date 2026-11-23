@@ -6,7 +6,9 @@ const route = useRoute();
 
 const isMenuOpen = ref(false);
 
-const isLibraryActive = computed(() => route.path.startsWith('/my-books'));
+const isLibraryActive = computed(
+  () => route.path.startsWith('/my-books') || route.path.startsWith('/books/'),
+);
 
 const openMenu = () => {
   isMenuOpen.value = true;
@@ -34,6 +36,7 @@ watch(
   <div class="min-h-screen flex flex-col bg-bg-default">
     <header
       class="sticky top-0 z-40 font-sans border-b border-border-disabled bg-bg-default lg:border-border-muted"
+      :class="route.meta.hideHeaderBelowLg ? 'hidden lg:block' : undefined"
     >
       <div
         class="page-container flex h-14 items-center justify-between md:h-auto md:py-3 lg:py-2"

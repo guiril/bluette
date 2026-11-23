@@ -119,6 +119,10 @@
   --text-accent-xs--line-height: 1.6875rem;
   --text-accent-xs--font-weight: 600;
   --text-accent-xs--letter-spacing: 0.01em;
+  --text-accent-title: 1.25rem;
+  --text-accent-title--line-height: 1.75rem;
+  --text-accent-title--font-weight: 600;
+  --text-accent-title--letter-spacing: 0.01em;
   --text-eyebrow: 0.875rem;
   --text-eyebrow--line-height: 1.125rem;
   --text-eyebrow--font-weight: 500;

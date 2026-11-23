@@ -51,10 +51,6 @@ const selectedNotesBook = computed(
     ) ?? null,
 );
 
-const handleOpenInfo = (userBookId: string) => {
-  selectedInfoBookId.value = userBookId;
-};
-
 const handleOpenNotes = (userBookId: string) => {
   selectedInfoBookId.value = null;
   selectedNotesBookId.value = userBookId;
@@ -83,10 +79,8 @@ const handleBookAdded = async (title: string) => {
   toastRef.value?.show(`成功新增《${title}》`);
 };
 
-// Opens the info modal until the book page is built.
 const handleOpenBook = async (userBookId: string) => {
-  await navigateTo('/my-books');
-  handleOpenInfo(userBookId);
+  await navigateTo(`/books/${userBookId}`);
 };
 
 const handleInfoError = (message: string) => {
@@ -185,7 +179,7 @@ const handleInfoError = (message: string) => {
                 v-for="userBook in tab.books"
                 :key="userBook.id"
                 :user-book="userBook"
-                @open-info="handleOpenInfo"
+                @open-info="handleOpenBook"
               />
             </ul>
             <p
