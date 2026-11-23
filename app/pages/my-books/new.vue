@@ -3,7 +3,6 @@ import type { BookDetails, UserBook } from '~/types/database';
 import { Dialog, DialogPanel, DialogTitle } from '@headlessui/vue';
 
 const SEARCH_PATH = '/my-books/new';
-const SEARCH_DEBOUNCE_MS = 400;
 
 const { userBooks } = defineProps<{
   userBooks: UserBook[];
@@ -14,26 +13,25 @@ const emit = defineEmits<{
   openBook: [userBookId: string];
 }>();
 
-let latestSearchId = 0;
-let searchTimer: ReturnType<typeof setTimeout> | null = null;
+const {
+  searchQuery,
+  hasSearched,
+  isSearching,
+  searchResults,
+  searchedQuery,
+  searchErrorMessage,
+  handleSearch,
+} = useBookSearch();
 
 const route = useRoute();
 const router = useRouter();
 
-const isManualMode = computed(() => route.query.mode === 'manual');
-
 const addingBook = ref<BookDetails | null>(null);
 const addErrorMessage = ref('');
 
-const searchQuery = ref('');
-const searchedQuery = ref('');
-const searchResults = ref<BookDetails[]>([]);
-
-const isSearching = ref(false);
-const hasSearched = ref(false);
-const searchErrorMessage = ref('');
-
 const searchInput = useTemplateRef<HTMLInputElement>('searchInput');
+
+const isManualMode = computed(() => route.query.mode === 'manual');
 
 const userBookIdByGoogleBooksId = computed(() => {
   const userBookIds = new Map<string, string>();
@@ -46,56 +44,6 @@ const userBookIdByGoogleBooksId = computed(() => {
 
   return userBookIds;
 });
-
-const clearSearchTimer = () => {
-  if (!searchTimer) return;
-
-  clearTimeout(searchTimer);
-  searchTimer = null;
-};
-
-const handleSearch = async () => {
-  clearSearchTimer();
-
-  const trimmedQuery = searchQuery.value.trim();
-
-  if (!trimmedQuery) return;
-
-  isSearching.value = true;
-  searchErrorMessage.value = '';
-  addErrorMessage.value = '';
-
-  const searchId = latestSearchId + 1;
-  latestSearchId = searchId;
-
-  try {
-    const books = await $fetch<BookDetails[]>('/api/books/search', {
-      query: { q: trimmedQuery },
-    });
-
-    if (searchId !== latestSearchId) return;
-
-    searchResults.value = books;
-    searchedQuery.value = trimmedQuery;
-  } catch {
-    if (searchId !== latestSearchId) return;
-    searchErrorMessage.value = '搜尋失敗，請稍後再試';
-  } finally {
-    if (searchId === latestSearchId) {
-      isSearching.value = false;
-      hasSearched.value = true;
-    }
-  }
-};
-
-const resetSearch = () => {
-  latestSearchId += 1;
-  searchResults.value = [];
-  searchErrorMessage.value = '';
-  addErrorMessage.value = '';
-  isSearching.value = false;
-  hasSearched.value = false;
-};
 
 const closeDialog = () => {
   navigateTo('/my-books');
@@ -169,21 +117,8 @@ const addBook = async (book: BookDetails) => {
   }
 };
 
-watch(searchQuery, (query) => {
-  clearSearchTimer();
-
-  if (!query.trim()) {
-    resetSearch();
-    return;
-  }
-
-  searchTimer = setTimeout(() => {
-    handleSearch();
-  }, SEARCH_DEBOUNCE_MS);
-});
-
-onBeforeUnmount(() => {
-  clearSearchTimer();
+watch(searchQuery, () => {
+  addErrorMessage.value = '';
 });
 </script>
 
