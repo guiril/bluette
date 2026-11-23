@@ -307,7 +307,7 @@ onBeforeUnmount(() => {
               v-if="isSearching"
               class="flex justify-center py-8 text-text-muted"
             >
-              <AppSpinner label="搜尋中" />
+              <BaseSpinner label="搜尋中" />
             </div>
             <div v-if="hasSearched && !isSearching" class="page-container pb-4">
               <p
@@ -393,7 +393,7 @@ onBeforeUnmount(() => {
                       >
                         已在書庫
                       </span>
-                      <AppSpinner
+                      <BaseSpinner
                         v-if="addingBook === book"
                         size="sm"
                         label="新增中"
@@ -428,13 +428,13 @@ onBeforeUnmount(() => {
                     </p>
                   </div>
                 </div>
-                <AppButton
+                <BaseButton
                   :to="{ query: { mode: 'manual' } }"
                   class="w-63 md:w-75 lg:h-13 lg:w-63 lg:gap-2.5"
                 >
                   <Icon name="bluette:add" class="size-5 lg:size-6" />
                   手動新增書籍
-                </AppButton>
+                </BaseButton>
               </div>
             </div>
           </div>

@@ -29,7 +29,7 @@ const emit = defineEmits<{
 </script>
 
 <template>
-  <AppModal :open="open" :title="title" size="sm" @close="emit('cancel')">
+  <BaseModal :open="open" :title="title" size="sm" @close="emit('cancel')">
     <p class="mt-3 text-[13px] max-sm:text-[14px] leading-[1.6] text-ink-soft">
       {{ message }}
     </p>
@@ -55,9 +55,9 @@ const emit = defineEmits<{
           v-if="isConfirming"
           class="absolute inset-0 flex items-center justify-center"
         >
-          <AppSpinner size="sm" />
+          <BaseSpinner size="sm" />
         </span>
       </button>
     </div>
-  </AppModal>
+  </BaseModal>
 </template>

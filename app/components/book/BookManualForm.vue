@@ -65,7 +65,7 @@ onMounted(() => {
     @submit.prevent="handleSubmit"
   >
     <div class="flex flex-col gap-4">
-      <AppTextField
+      <BaseTextField
         id="manual-title"
         ref="titleField"
         v-model="title"
@@ -84,8 +84,8 @@ onMounted(() => {
             <Icon name="bluette:clear" class="size-5" />
           </button>
         </template>
-      </AppTextField>
-      <AppTextField
+      </BaseTextField>
+      <BaseTextField
         id="manual-author"
         ref="authorField"
         v-model="author"
@@ -104,18 +104,18 @@ onMounted(() => {
             <Icon name="bluette:clear" class="size-5" />
           </button>
         </template>
-      </AppTextField>
+      </BaseTextField>
       <p v-if="errorMessage" role="alert" class="text-body-sm text-text-danger">
         {{ errorMessage }}
       </p>
     </div>
-    <AppButton
+    <BaseButton
       type="submit"
       class="w-full"
       :disabled="!canSubmit"
       :is-loading="isSubmitting"
     >
       確定新增
-    </AppButton>
+    </BaseButton>
   </form>
 </template>

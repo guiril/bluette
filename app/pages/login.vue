@@ -73,7 +73,7 @@ const submitForm = async () => {
           @submit.prevent="submitForm"
         >
           <div class="flex flex-col gap-4">
-            <AppTextField
+            <BaseTextField
               id="email"
               ref="emailField"
               v-model="email"
@@ -96,8 +96,8 @@ const submitForm = async () => {
                   <Icon name="bluette:clear" class="size-5" />
                 </button>
               </template>
-            </AppTextField>
-            <AppTextField
+            </BaseTextField>
+            <BaseTextField
               id="password"
               ref="passwordField"
               v-model="password"
@@ -120,7 +120,7 @@ const submitForm = async () => {
                   {{ showPassword ? '隱藏' : '顯示' }}
                 </button>
               </template>
-            </AppTextField>
+            </BaseTextField>
           </div>
           <div class="flex flex-col gap-4">
             <p
@@ -130,14 +130,14 @@ const submitForm = async () => {
             >
               {{ errorMessage }}
             </p>
-            <AppButton
+            <BaseButton
               type="submit"
               :is-loading="isSubmitting"
               :disabled="!canSubmit"
               class="w-full"
             >
               立即登入
-            </AppButton>
+            </BaseButton>
           </div>
         </form>
       </div>

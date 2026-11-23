@@ -92,7 +92,7 @@ const handleConfirmDelete = async () => {
 </script>
 
 <template>
-  <AppModal
+  <BaseModal
     :title="userBook.title"
     :initial-focus="hasFinePointer ? draftTextarea : null"
     @close="emit('close')"
@@ -115,7 +115,7 @@ const handleConfirmDelete = async () => {
           v-if="isSubmitting"
           class="absolute inset-0 flex items-center justify-center"
         >
-          <AppSpinner size="sm" />
+          <BaseSpinner size="sm" />
         </span>
       </button>
     </form>
@@ -123,7 +123,7 @@ const handleConfirmDelete = async () => {
       v-if="loadStatus === 'pending'"
       class="mt-6 flex justify-center text-ink-soft"
     >
-      <AppSpinner label="載入中" />
+      <BaseSpinner label="載入中" />
     </div>
     <p
       v-else-if="loadStatus === 'error'"
@@ -150,7 +150,7 @@ const handleConfirmDelete = async () => {
             {{ formatNoteDate(note.created_at) }}
           </time>
         </div>
-        <AppTooltip text="刪除">
+        <BaseTooltip text="刪除">
           <button
             type="button"
             class="flex size-6 max-sm:size-7 shrink-0 items-center justify-center text-ink-soft cursor-pointer transition-colors hover:text-primary"
@@ -159,13 +159,13 @@ const handleConfirmDelete = async () => {
           >
             <Icon name="material-symbols:delete-outline" class="text-[18px]" />
           </button>
-        </AppTooltip>
+        </BaseTooltip>
       </li>
     </ul>
     <p v-else class="mt-4 text-[14px] max-sm:text-base text-ink-soft">
       還沒有筆記，寫下第一則吧。
     </p>
-    <AppConfirmModal
+    <BaseConfirmModal
       :open="pendingDeleteNoteId !== null"
       title="刪除這則筆記？"
       message="刪除後就無法復原。"
@@ -175,5 +175,5 @@ const handleConfirmDelete = async () => {
       @confirm="handleConfirmDelete"
       @cancel="handleCancelDelete"
     />
-  </AppModal>
+  </BaseModal>
 </template>

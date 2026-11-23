@@ -42,7 +42,7 @@ const handleConfirmRemove = async () => {
 </script>
 
 <template>
-  <AppModal
+  <BaseModal
     :title="userBook.title"
     :subtitle="userBook.author || '作者不詳'"
     @close="emit('close')"
@@ -70,7 +70,7 @@ const handleConfirmRemove = async () => {
         從書庫移除
       </button>
     </div>
-    <AppConfirmModal
+    <BaseConfirmModal
       :open="isConfirmingRemove"
       title="從書庫移除這本書？"
       :message="removeMessage"
@@ -80,5 +80,5 @@ const handleConfirmRemove = async () => {
       @confirm="handleConfirmRemove"
       @cancel="handleCancelRemove"
     />
-  </AppModal>
+  </BaseModal>
 </template>

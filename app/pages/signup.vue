@@ -75,7 +75,7 @@ const submitForm = async () => {
           @submit.prevent="submitForm"
         >
           <div class="flex flex-col gap-4">
-            <AppTextField
+            <BaseTextField
               id="email"
               ref="emailField"
               v-model="email"
@@ -99,8 +99,8 @@ const submitForm = async () => {
                   <Icon name="bluette:clear" class="size-5" />
                 </button>
               </template>
-            </AppTextField>
-            <AppTextField
+            </BaseTextField>
+            <BaseTextField
               id="password"
               ref="passwordField"
               v-model="password"
@@ -125,7 +125,7 @@ const submitForm = async () => {
                   {{ showPassword ? '隱藏' : '顯示' }}
                 </button>
               </template>
-            </AppTextField>
+            </BaseTextField>
           </div>
           <div class="flex flex-col gap-4">
             <p
@@ -135,14 +135,14 @@ const submitForm = async () => {
             >
               {{ errorMessage }}
             </p>
-            <AppButton
+            <BaseButton
               type="submit"
               :is-loading="isSubmitting"
               :disabled="!canSubmit"
               class="w-full"
             >
               建立帳號
-            </AppButton>
+            </BaseButton>
             <p class="flex flex-wrap gap-1 text-ui-caption text-text-muted">
               建立帳號，表示你同意 Bluette 的
               <a

@@ -129,13 +129,13 @@ const handleInfoError = (message: string) => {
           class="absolute inset-0 size-full object-contain"
         />
       </div>
-      <AppButton
+      <BaseButton
         to="/my-books/new"
         class="w-full lg:col-start-2 lg:row-start-3 lg:mt-10 lg:mb-12 lg:w-100"
       >
         <Icon name="bluette:add" class="size-5" />
         新增一本書
-      </AppButton>
+      </BaseButton>
     </div>
     <div v-else class="page-container pt-10 max-sm:pt-6 pb-16">
       <div class="flex items-center justify-between py-1">
@@ -144,10 +144,10 @@ const handleInfoError = (message: string) => {
         >
           書庫
         </h1>
-        <AppButton to="/my-books/new" size="md" class="pr-5!">
+        <BaseButton to="/my-books/new" size="md" class="pr-5!">
           <img class="size-4 p-0.5" src="/images/icons/add.svg" alt="" />
           <span>新增一本書</span>
-        </AppButton>
+        </BaseButton>
       </div>
       <TabGroup>
         <TabList class="flex gap-6 mt-5 border-b border-border-subtle">
@@ -181,7 +181,7 @@ const handleInfoError = (message: string) => {
               v-if="tab.books.length > 0"
               class="grid grid-cols-7 max-lg:grid-cols-6 max-md:grid-cols-4 max-sm:grid-cols-2 gap-4 mt-8"
             >
-              <UserBookCard
+              <BookCard
                 v-for="userBook in tab.books"
                 :key="userBook.id"
                 :user-book="userBook"
@@ -212,7 +212,7 @@ const handleInfoError = (message: string) => {
       @close="handleNotesClose"
       @error="handleNotesError"
     />
-    <AppToast ref="toastRef" />
+    <BaseToast ref="toastRef" />
     <NuxtPage
       :user-books="userBooks ?? []"
       @book-added="handleBookAdded"
