@@ -108,7 +108,7 @@ const handleConfirmRemove = async () => {
         </div>
         <div class="flex flex-col justify-center items-center lg:pt-3">
           <span
-            class="relative block w-26 h-37.5 overflow-hidden rounded-[0.25rem] bg-surface-raised md:w-34.75 md:h-50 md:shadow-[0_10px_20px_-4px_rgb(89_51_20/0.25)] md:after:absolute md:after:inset-0 md:after:rounded-[0.25rem] md:after:border md:after:border-[#C0BDB4]/40"
+            class="relative block w-26 h-37.5 overflow-hidden rounded-[0.25rem] bg-surface-raised md:w-34.75 md:h-50 md:shadow-[0_10px_20px_-4px_rgb(89_51_20/0.25)] md:after:absolute md:after:inset-0 md:after:rounded-[0.25rem] md:after:border md:after:border-border-muted/40"
           >
             <img
               v-if="userBook.cover_url"
