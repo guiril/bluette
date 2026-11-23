@@ -7,6 +7,12 @@ definePageMeta({
 
 const route = useRoute('books-id');
 const router = useRouter();
+const flashMessage = useFlashMessage();
+
+const toastRef = useTemplateRef('toastRef');
+
+const isConfirmingRemove = ref(false);
+const isRemoving = ref(false);
 
 const { data: userBook, error } = await useFetch<UserBookWithNotes>(
   `/api/user-books/${route.params.id}`,
@@ -28,6 +34,36 @@ const goBack = () => {
 
   navigateTo('/my-books', { replace: true });
 };
+
+const removeMessage = computed(
+  () => `《${userBook.value?.title}》的筆記不會刪除，會移到未分類。`,
+);
+
+const openRemoveConfirm = () => {
+  isConfirmingRemove.value = true;
+};
+
+const handleCancelRemove = () => {
+  if (isRemoving.value) return;
+
+  isConfirmingRemove.value = false;
+};
+
+const handleConfirmRemove = async () => {
+  isRemoving.value = true;
+
+  try {
+    await $fetch(`/api/user-books/${route.params.id}`, { method: 'DELETE' });
+
+    flashMessage.value = '已從書庫移除';
+    await navigateTo('/my-books', { replace: true });
+  } catch {
+    isConfirmingRemove.value = false;
+    toastRef.value?.show('移除失敗，請稍後再試');
+  } finally {
+    isRemoving.value = false;
+  }
+};
 </script>
 
 <template>
@@ -48,7 +84,7 @@ const goBack = () => {
             type="button"
             @click="goBack"
             aria-label="返回書庫"
-            class="flex w-11 py-3 pr-3 text-text-nav md:w-12 md:pt-3.75 md:pr-3.5 md:pb-3.25 lg:w-11 lg:py-3 lg:pr-3"
+            class="flex w-11 py-3 pr-3 text-text-nav cursor-pointer md:w-12 md:pt-3.75 md:pr-3.5 md:pb-3.25 lg:w-11 lg:py-3 lg:pr-3"
           >
             <Icon name="bluette:arrow-left" class="size-5" />
           </button>
@@ -56,14 +92,15 @@ const goBack = () => {
             <button
               type="button"
               aria-label="從書庫移除"
-              class="flex w-11 pl-6 py-3 text-text-default md:w-12 md:pl-7 md:py-3.5"
+              @click="openRemoveConfirm"
+              class="flex w-11 pl-6 py-3 text-text-nav cursor-pointer md:w-12 md:pl-7 md:py-3.5"
             >
               <Icon name="bluette:trash" class="size-5" />
             </button>
             <button
               type="button"
               aria-label="編輯書籍資料"
-              class="flex w-11 pl-6 py-3 text-text-default md:w-12 md:pl-7 md:py-3.5"
+              class="flex w-11 pl-6 py-3 text-text-nav cursor-pointer md:w-12 md:pl-7 md:py-3.5"
             >
               <Icon name="bluette:edit" class="size-5" />
             </button>
@@ -110,6 +147,7 @@ const goBack = () => {
             </button>
             <button
               type="button"
+              @click="openRemoveConfirm"
               class="flex items-center gap-1 font-sans text-body-sm font-medium text-text-default underline underline-offset-2 cursor-pointer"
             >
               <Icon name="bluette:trash" class="size-4" />
@@ -151,9 +189,7 @@ const goBack = () => {
               >
                 打動你的句子、閃過的念頭，都值得寫下
               </p>
-              <BaseButton
-                class="w-63 mt-5 md:mt-8 mx-auto md:w-75 lg:h-13"
-              >
+              <BaseButton class="w-63 mt-5 md:mt-8 mx-auto md:w-75 lg:h-13">
                 <Icon name="bluette:pencil" class="size-5 lg:size-6" />
                 寫下第一則筆記
               </BaseButton>
@@ -162,5 +198,16 @@ const goBack = () => {
         </div>
       </div>
     </div>
+    <BaseConfirmModal
+      :open="isConfirmingRemove"
+      title="從書庫移除這本書？"
+      :message="removeMessage"
+      confirm-label="移除"
+      variant="danger"
+      :is-confirming="isRemoving"
+      @confirm="handleConfirmRemove"
+      @cancel="handleCancelRemove"
+    />
+    <BaseToast ref="toastRef" />
   </div>
 </template>

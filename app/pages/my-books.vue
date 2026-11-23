@@ -10,6 +10,7 @@ const selectedInfoBookId = ref<string | null>(null);
 const selectedNotesBookId = ref<string | null>(null);
 
 const toastRef = useTemplateRef('toastRef');
+const flashMessage = useFlashMessage();
 
 const hasBooks = computed(() => (userBooks.value ?? []).length > 0);
 
@@ -86,6 +87,13 @@ const handleOpenBook = async (userBookId: string) => {
 const handleInfoError = (message: string) => {
   toastRef.value?.show(message);
 };
+
+onMounted(() => {
+  if (!flashMessage.value) return;
+
+  toastRef.value?.show(flashMessage.value);
+  flashMessage.value = null;
+});
 </script>
 
 <template>
