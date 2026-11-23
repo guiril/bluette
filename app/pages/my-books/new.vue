@@ -1,6 +1,5 @@
 <script setup lang="ts">
 import type { BookDetails, UserBook } from '~/types/database';
-
 import { Dialog, DialogPanel, DialogTitle } from '@headlessui/vue';
 
 const SEARCH_PATH = '/my-books/new';
@@ -23,14 +22,6 @@ const route = useRoute();
 const router = useRouter();
 
 const isManualMode = computed(() => route.query.mode === 'manual');
-const manualTitleField = useTemplateRef('manualTitleField');
-const manualAuthorField = useTemplateRef('manualAuthorField');
-const manualTitle = ref('');
-const manualAuthor = ref('');
-const isAddingManualBook = ref(false);
-const manualErrorMessage = ref('');
-
-const canAddManualBook = computed(() => manualTitle.value.trim() !== '');
 
 const addingBook = ref<BookDetails | null>(null);
 const addErrorMessage = ref('');
@@ -216,53 +207,6 @@ const addBook = async (book: BookDetails) => {
   }
 };
 
-const addManualBook = async () => {
-  if (!canAddManualBook.value || isAddingManualBook.value) return;
-
-  const title = manualTitle.value.trim();
-
-  isAddingManualBook.value = true;
-  manualErrorMessage.value = '';
-
-  try {
-    await $fetch('/api/user-books', {
-      method: 'POST',
-      body: {
-        title,
-        author: manualAuthor.value,
-      },
-    });
-
-    emit('bookAdded', title);
-    await navigateTo('/my-books');
-  } catch {
-    manualErrorMessage.value = '新增失敗，請稍後再試';
-  } finally {
-    isAddingManualBook.value = false;
-  }
-};
-
-const clearManualTitle = () => {
-  manualTitle.value = '';
-  manualTitleField.value?.focus();
-};
-
-const clearManualAuthor = () => {
-  manualAuthor.value = '';
-  manualAuthorField.value?.focus();
-};
-
-watch(
-  isManualMode,
-  (isManual) => {
-    if (isManual) {
-      manualTitle.value = searchQuery.value.trim();
-      manualTitleField.value?.focus();
-    }
-  },
-  { flush: 'post' },
-);
-
 watch(searchQuery, (query) => {
   clearSearchTimer();
 
@@ -341,71 +285,12 @@ onBeforeUnmount(() => {
         >
           <Icon name="bluette:close-sm" class="size-4" />
         </button>
-        <div v-if="isManualMode" class="page-container pt-3">
-          <form
-            novalidate
-            class="flex flex-col gap-6 md:gap-8"
-            @submit.prevent="addManualBook"
-          >
-            <div class="flex flex-col gap-4">
-              <AppTextField
-                id="manual-title"
-                ref="manualTitleField"
-                label="書名"
-                v-model="manualTitle"
-                placeholder="輸入書名"
-              >
-                <template #trailing>
-                  <button
-                    v-if="manualTitle"
-                    type="button"
-                    aria-label="清除書名"
-                    class="flex p-2.5 text-fg-default cursor-pointer"
-                    @mousedown.prevent
-                    @click="clearManualTitle"
-                  >
-                    <Icon name="bluette:clear" class="size-5" />
-                  </button>
-                </template>
-              </AppTextField>
-              <AppTextField
-                id="manual-author"
-                ref="manualAuthorField"
-                label="作者（選填）"
-                v-model="manualAuthor"
-                placeholder="輸入作者"
-              >
-                <template #trailing>
-                  <button
-                    v-if="manualAuthor"
-                    type="button"
-                    aria-label="清除作者"
-                    class="flex p-2.5 text-fg-default cursor-pointer"
-                    @mousedown.prevent
-                    @click="clearManualAuthor"
-                  >
-                    <Icon name="bluette:clear" class="size-5" />
-                  </button>
-                </template>
-              </AppTextField>
-              <p
-                v-if="manualErrorMessage"
-                role="alert"
-                class="text-body-sm text-text-danger"
-              >
-                {{ manualErrorMessage }}
-              </p>
-            </div>
-            <AppButton
-              type="submit"
-              class="w-full"
-              :disabled="!canAddManualBook"
-              :is-loading="isAddingManualBook"
-            >
-              確定新增
-            </AppButton>
-          </form>
-        </div>
+        <BookManualForm
+          v-if="isManualMode"
+          :initial-title="searchQuery.trim()"
+          class="page-container pt-3"
+          @added="emit('bookAdded', $event)"
+        />
         <template v-else>
           <form
             role="search"
