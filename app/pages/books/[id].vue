@@ -1,6 +1,8 @@
 <script setup lang="ts">
 import type { UserBookWithNotes } from '~/types/database';
 
+type NoteSortOrder = 'page' | 'recent';
+
 definePageMeta({
   hideHeaderBelowLg: true,
 });
@@ -13,6 +15,7 @@ const toastRef = useTemplateRef('toastRef');
 
 const isConfirmingRemove = ref(false);
 const isRemoving = ref(false);
+const noteSortOrder = ref<NoteSortOrder>('recent');
 
 const { data: userBook, error } = await useFetch<UserBookWithNotes>(
   `/api/user-books/${route.params.id}`,
@@ -40,6 +43,20 @@ const numberedNotes = computed(() =>
     number: notes.value.length - index,
   })),
 );
+
+const sortedNotes = computed(() => {
+  if (noteSortOrder.value === 'recent') return numberedNotes.value;
+
+  return numberedNotes.value.toSorted(
+    ({ note: firstNote }, { note: secondNote }) => {
+      if (firstNote.page === secondNote.page) return 0;
+      if (firstNote.page === null) return 1;
+      if (secondNote.page === null) return -1;
+
+      return firstNote.page - secondNote.page;
+    },
+  );
+});
 
 const goBack = () => {
   if (router.options.history.state.back) {
@@ -193,9 +210,41 @@ const handleConfirmRemove = async () => {
                   ({{ notes.length }})</template
                 >
               </h2>
+              <div
+                v-if="notes.length > 0"
+                class="flex items-center font-sans text-body-sm font-medium tracking-[0.01em]"
+              >
+                <button
+                  type="button"
+                  :aria-pressed="noteSortOrder === 'page'"
+                  class="cursor-pointer"
+                  :class="
+                    noteSortOrder === 'page'
+                      ? 'text-text-default'
+                      : 'text-text-muted'
+                  "
+                  @click="noteSortOrder = 'page'"
+                >
+                  依頁碼
+                </button>
+                <span class="h-3.5 mx-2.5 border-l border-border-muted"></span>
+                <button
+                  type="button"
+                  :aria-pressed="noteSortOrder === 'recent'"
+                  class="cursor-pointer"
+                  :class="
+                    noteSortOrder === 'recent'
+                      ? 'text-text-default'
+                      : 'text-text-muted'
+                  "
+                  @click="noteSortOrder = 'recent'"
+                >
+                  最近寫下
+                </button>
+              </div>
             </div>
             <ul v-if="notes.length > 0" class="flex flex-col gap-2 pb-30">
-              <li v-for="{ note, number } in numberedNotes" :key="note.id">
+              <li v-for="{ note, number } in sortedNotes" :key="note.id">
                 <NoteCard :note="note" :number="number" />
               </li>
             </ul>
