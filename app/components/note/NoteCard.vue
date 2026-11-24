@@ -12,9 +12,9 @@ const memoText = computed(() => note.thought || note.content);
 
 <template>
   <article
-    class="flex flex-col px-3.5 py-4 rounded-xl border border-border-disabled/60 bg-bg-sub md:px-5"
+    class="flex flex-col px-3.5 py-4 rounded-xl border border-border-disabled/60 bg-bg-sub md:px-5 lg:px-6"
   >
-    <div class="flex flex-col gap-5">
+    <div class="flex flex-col gap-5" :class="note.excerpt ? 'lg:gap-6' : ''">
       <div class="flex items-center justify-between">
         <span
           class="font-sans text-xs/4.5 font-medium text-text-muted md:text-body-sm md:tracking-[0.01em]"

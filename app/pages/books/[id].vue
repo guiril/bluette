@@ -223,7 +223,7 @@ onBeforeUnmount(() => {
             </div>
             <p
               v-if="notes.length > 0"
-              class="mt-1.5 font-sans text-xs/4.5 font-medium text-text-nav md:mt-2.5 md:text-body-sm md:tracking-[0.01em]"
+              class="mt-1.5 font-sans text-xs/4.5 font-medium text-text-nav md:mt-2.5 md:text-body-sm md:tracking-[0.01em] lg:hidden"
             >
               {{ notes.length }} 則筆記 ·
               <span class="hidden md:inline">最近</span>
@@ -344,7 +344,7 @@ onBeforeUnmount(() => {
       v-if="notes.length > 0"
       type="button"
       :aria-label="isTitleScrolledPast ? '寫下筆記' : undefined"
-      class="fixed right-5 bottom-5 z-30 flex items-center text-text-on-inverse bg-button-primary-bg-rest shadow-[0_4px_12px_0_#1111111a] transition-[padding,border-radius] duration-200 cursor-pointer hover:bg-button-primary-bg-hover md:right-6 md:bottom-6"
+      class="fixed right-5 bottom-5 z-30 flex items-center text-text-on-inverse bg-button-primary-bg-rest shadow-[0_4px_12px_0_#1111111a] transition-[padding,border-radius] duration-200 cursor-pointer hover:bg-button-primary-bg-hover md:right-6 md:bottom-6 lg:right-[max(1.5rem,(100%_-_78rem)/2_+_1.5rem)] lg:bottom-8 lg:py-3.5 lg:pr-5 lg:pl-4 lg:rounded-lg"
       :class="
         isTitleScrolledPast
           ? 'px-3.5 py-3 rounded-3xl md:p-4 md:rounded-[1.75rem]'
@@ -353,16 +353,16 @@ onBeforeUnmount(() => {
     >
       <Icon
         name="bluette:pencil"
-        class="size-5 transition-[width,height] duration-200"
+        class="size-5 transition-[width,height] duration-200 lg:size-6"
         :class="isTitleScrolledPast ? 'md:size-6' : ''"
       />
       <span
-        class="grid transition-[grid-template-columns] duration-200"
+        class="grid transition-[grid-template-columns] duration-200 lg:grid-cols-[1fr]"
         :class="isTitleScrolledPast ? 'grid-cols-[0fr]' : 'grid-cols-[1fr]'"
       >
         <span class="overflow-hidden">
           <span
-            class="block pl-1 font-sans text-body-sm whitespace-nowrap md:pl-1.5 md:text-body-md"
+            class="block pl-1 font-sans text-body-sm whitespace-nowrap md:pl-1.5 md:text-body-md lg:pl-2.5"
           >
             寫下筆記
           </span>
