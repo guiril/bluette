@@ -206,24 +206,28 @@ onBeforeUnmount(() => {
             </span>
           </span>
           <div
-            class="flex flex-col w-full py-4 px-8 text-center md:gap-1 md:py-6 lg:pt-6 lg:pb-2.5"
+            class="flex flex-col w-full py-4 px-8 text-center md:py-6 lg:pt-6 lg:pb-2.5"
           >
-            <h1
-              ref="titleRef"
-              class="truncate font-serif text-heading-h6 text-text-default md:text-accent-title"
-            >
-              {{ userBook.title }}
-            </h1>
-            <p
-              class="truncate font-sans text-body-sm text-text-muted md:text-body-md"
-            >
-              {{ userBook.author || '作者不詳' }}
-            </p>
+            <div class="flex flex-col md:gap-1">
+              <h1
+                ref="titleRef"
+                class="truncate font-serif text-heading-h6 text-text-default md:text-accent-title"
+              >
+                {{ userBook.title }}
+              </h1>
+              <p
+                class="truncate font-sans text-body-sm text-text-muted md:text-body-md"
+              >
+                {{ userBook.author || '作者不詳' }}
+              </p>
+            </div>
             <p
               v-if="notes.length > 0"
-              class="mt-1.5 font-sans text-xs/4.5 font-medium text-text-nav"
+              class="mt-1.5 font-sans text-xs/4.5 font-medium text-text-nav md:mt-2.5 md:text-body-sm md:tracking-[0.01em]"
             >
-              {{ notes.length }} 則筆記 · {{ latestNoteDate }}
+              {{ notes.length }} 則筆記 ·
+              <span class="hidden md:inline">最近</span>
+              {{ latestNoteDate }}
             </p>
           </div>
           <div class="hidden lg:flex gap-3 pt-4">
@@ -250,13 +254,17 @@ onBeforeUnmount(() => {
           class="rounded-tl-4xl bg-bg-default lg:flex lg:flex-1 lg:flex-col lg:rounded-none"
         >
           <div
-            class="page-container flex flex-col gap-1 pt-4 md:pt-8 lg:flex-1 lg:gap-4 lg:px-0 lg:pt-5 lg:pb-8 lg:pl-12"
+            class="page-container flex flex-col gap-1 pt-4 md:gap-2 md:pt-8 lg:flex-1 lg:gap-4 lg:px-0 lg:pt-5 lg:pb-8 lg:pl-12"
           >
-            <div class="flex items-center justify-between my-2.5 lg:my-4.5">
+            <div
+              class="flex items-center justify-between h-11 lg:h-auto lg:my-4.5"
+            >
               <h2
                 class="flex gap-2 md:gap-2.5 items-center text-text-default text-body-sm md:text-body-md"
               >
-                <span class="size-1.5 bg-bg-brand-emphasis lg:hidden"></span
+                <span
+                  class="size-1.5 bg-bg-brand-emphasis md:size-2 lg:hidden"
+                ></span
                 >筆記專區<template v-if="notes.length > 0">
                   ({{ notes.length }})</template
                 >
@@ -294,14 +302,17 @@ onBeforeUnmount(() => {
                 </button>
               </div>
             </div>
-            <ul v-if="notes.length > 0" class="flex flex-col gap-2 pb-30">
+            <ul
+              v-if="notes.length > 0"
+              class="flex flex-col gap-2 pb-30 md:gap-3"
+            >
               <li v-for="{ note, number } in sortedNotes" :key="note.id">
                 <NoteCard :note="note" :number="number" />
               </li>
             </ul>
             <div
               v-else
-              class="py-6 lg:flex lg:flex-1 lg:flex-col lg:justify-center lg:py-0"
+              class="py-6 md:pt-5 lg:flex lg:flex-1 lg:flex-col lg:justify-center lg:py-0"
             >
               <div class="relative w-87.5 h-49.25 mb-3 mx-auto md:h-65 lg:mb-5">
                 <img
@@ -333,20 +344,26 @@ onBeforeUnmount(() => {
       v-if="notes.length > 0"
       type="button"
       :aria-label="isTitleScrolledPast ? '寫下筆記' : undefined"
-      class="fixed right-5 bottom-5 z-30 flex items-center text-text-on-inverse bg-button-primary-bg-rest shadow-[0_4px_12px_0_#1111111a] transition-[padding,border-radius] duration-200 cursor-pointer hover:bg-button-primary-bg-hover"
+      class="fixed right-5 bottom-5 z-30 flex items-center text-text-on-inverse bg-button-primary-bg-rest shadow-[0_4px_12px_0_#1111111a] transition-[padding,border-radius] duration-200 cursor-pointer hover:bg-button-primary-bg-hover md:right-6 md:bottom-6"
       :class="
         isTitleScrolledPast
-          ? 'px-3.5 py-3 rounded-3xl'
-          : 'py-2.5 pr-5 pl-3 rounded-lg'
+          ? 'px-3.5 py-3 rounded-3xl md:p-4 md:rounded-[1.75rem]'
+          : 'py-2.5 pr-5 pl-3 rounded-lg md:py-3 md:pl-3.5'
       "
     >
-      <Icon name="bluette:pencil" class="size-5" />
+      <Icon
+        name="bluette:pencil"
+        class="size-5 transition-[width,height] duration-200"
+        :class="isTitleScrolledPast ? 'md:size-6' : ''"
+      />
       <span
         class="grid transition-[grid-template-columns] duration-200"
         :class="isTitleScrolledPast ? 'grid-cols-[0fr]' : 'grid-cols-[1fr]'"
       >
         <span class="overflow-hidden">
-          <span class="block pl-1 font-sans text-body-sm whitespace-nowrap">
+          <span
+            class="block pl-1 font-sans text-body-sm whitespace-nowrap md:pl-1.5 md:text-body-md"
+          >
             寫下筆記
           </span>
         </span>
