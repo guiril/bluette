@@ -157,7 +157,7 @@ onBeforeUnmount(() => {
       class="flex flex-1 flex-col lg:mx-auto lg:w-full lg:max-w-312 lg:flex-row lg:px-6"
     >
       <div
-        class="flex flex-col bg-[#EAD3B6] rounded-br-4xl lg:w-85 lg:shrink-0 lg:rounded-none"
+        class="flex flex-col bg-[#EAD3B6] rounded-br-4xl lg:sticky lg:top-20.25 lg:self-start lg:w-85 lg:shrink-0 lg:rounded-none"
       >
         <div
           class="page-container flex items-center pt-3 pb-2.5 md:py-3.5 lg:h-15 lg:mt-5 lg:px-0 lg:py-0"
