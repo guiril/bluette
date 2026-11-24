@@ -332,10 +332,25 @@ onBeforeUnmount(() => {
     <button
       v-if="notes.length > 0"
       type="button"
-      aria-label="新增筆記"
-      class="fixed right-5 bottom-5 z-30 flex p-4 text-text-on-inverse rounded-[0.625rem] bg-button-primary-bg-rest shadow-[0_4px_12px_0_#1111111a] cursor-pointer hover:bg-button-primary-bg-hover"
+      :aria-label="isTitleScrolledPast ? '寫下筆記' : undefined"
+      class="fixed right-5 bottom-5 z-30 flex items-center text-text-on-inverse bg-button-primary-bg-rest shadow-[0_4px_12px_0_#1111111a] transition-[padding,border-radius] duration-200 cursor-pointer hover:bg-button-primary-bg-hover"
+      :class="
+        isTitleScrolledPast
+          ? 'px-3.5 py-3 rounded-3xl'
+          : 'py-2.5 pr-5 pl-3 rounded-lg'
+      "
     >
-      <Icon name="bluette:pencil" class="size-6" />
+      <Icon name="bluette:pencil" class="size-5" />
+      <span
+        class="grid transition-[grid-template-columns] duration-200"
+        :class="isTitleScrolledPast ? 'grid-cols-[0fr]' : 'grid-cols-[1fr]'"
+      >
+        <span class="overflow-hidden">
+          <span class="block pl-1 font-sans text-body-sm whitespace-nowrap">
+            寫下筆記
+          </span>
+        </span>
+      </span>
     </button>
     <BaseConfirmModal
       :open="isConfirmingRemove"
