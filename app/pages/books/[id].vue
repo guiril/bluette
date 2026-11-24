@@ -26,6 +26,21 @@ if (error.value) {
   });
 }
 
+const notes = computed(() => userBook.value?.notes ?? []);
+
+const latestNoteDate = computed(() => {
+  const latestNote = notes.value[0];
+
+  return latestNote ? formatNoteDate(latestNote.created_at) : '';
+});
+
+const numberedNotes = computed(() =>
+  notes.value.map((note, index) => ({
+    note,
+    number: notes.value.length - index,
+  })),
+);
+
 const goBack = () => {
   if (router.options.history.state.back) {
     router.back();
@@ -136,6 +151,12 @@ const handleConfirmRemove = async () => {
             >
               {{ userBook.author || '作者不詳' }}
             </p>
+            <p
+              v-if="notes.length > 0"
+              class="mt-1.5 font-sans text-xs/4.5 font-medium text-text-nav"
+            >
+              {{ notes.length }} 則筆記 · {{ latestNoteDate }}
+            </p>
           </div>
           <div class="hidden lg:flex gap-3 pt-4">
             <button
@@ -163,13 +184,23 @@ const handleConfirmRemove = async () => {
           <div
             class="page-container flex flex-col gap-1 pt-4 md:pt-8 lg:flex-1 lg:gap-4 lg:px-0 lg:pt-5 lg:pb-8 lg:pl-12"
           >
-            <h2
-              class="flex gap-2 md:gap-2.5 items-center my-2.5 lg:my-4.5 text-text-default text-body-sm md:text-body-md"
-            >
-              <span class="size-1.5 bg-bg-brand-emphasis lg:hidden"></span
-              >筆記專區
-            </h2>
+            <div class="flex items-center justify-between my-2.5 lg:my-4.5">
+              <h2
+                class="flex gap-2 md:gap-2.5 items-center text-text-default text-body-sm md:text-body-md"
+              >
+                <span class="size-1.5 bg-bg-brand-emphasis lg:hidden"></span
+                >筆記專區<template v-if="notes.length > 0">
+                  ({{ notes.length }})</template
+                >
+              </h2>
+            </div>
+            <ul v-if="notes.length > 0" class="flex flex-col gap-2 pb-30">
+              <li v-for="{ note, number } in numberedNotes" :key="note.id">
+                <NoteCard :note="note" :number="number" />
+              </li>
+            </ul>
             <div
+              v-else
               class="py-6 lg:flex lg:flex-1 lg:flex-col lg:justify-center lg:py-0"
             >
               <div class="relative w-87.5 h-49.25 mb-3 mx-auto md:h-65 lg:mb-5">
@@ -198,6 +229,14 @@ const handleConfirmRemove = async () => {
         </div>
       </div>
     </div>
+    <button
+      v-if="notes.length > 0"
+      type="button"
+      aria-label="新增筆記"
+      class="fixed right-5 bottom-5 z-30 flex p-4 text-text-on-inverse rounded-[0.625rem] bg-button-primary-bg-rest shadow-[0_4px_12px_0_#1111111a] cursor-pointer hover:bg-button-primary-bg-hover"
+    >
+      <Icon name="bluette:pencil" class="size-6" />
+    </button>
     <BaseConfirmModal
       :open="isConfirmingRemove"
       title="從書庫移除這本書？"

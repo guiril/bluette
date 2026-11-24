@@ -77,6 +77,7 @@
   --color-bg-muted: #e6e3da;
   --color-bg-brand-emphasis: #ff4a1f;
   --color-bg-backdrop: rgb(18 17 16 / 0.48);
+  --color-bg-sub: #fcfbf7;
 
   --color-text-default: #121110;
   --color-text-muted: #75736b;
@@ -94,6 +95,7 @@
   --color-border-disabled: #d9d6cd;
   --color-border-emphasis: #121110;
   --color-border-danger-emphasis: #be241b;
+  --color-border-brand-emphasis: #ff4a1f;
 
   --color-button-primary-bg-rest: #121110;
   --color-button-primary-bg-hover: #2b2a26;
