@@ -12,10 +12,14 @@ const router = useRouter();
 const flashMessage = useFlashMessage();
 
 const toastRef = useTemplateRef('toastRef');
+const titleRef = useTemplateRef('titleRef');
 
 const isConfirmingRemove = ref(false);
 const isRemoving = ref(false);
 const noteSortOrder = ref<NoteSortOrder>('recent');
+const isTitleScrolledPast = ref(false);
+
+let titleObserver: IntersectionObserver | null = null;
 
 const { data: userBook, error } = await useFetch<UserBookWithNotes>(
   `/api/user-books/${route.params.id}`,
@@ -96,6 +100,26 @@ const handleConfirmRemove = async () => {
     isRemoving.value = false;
   }
 };
+
+onMounted(() => {
+  if (!titleRef.value) return;
+
+  titleObserver = new IntersectionObserver(
+    ([titleEntry]) => {
+      if (!titleEntry) return;
+
+      isTitleScrolledPast.value =
+        titleEntry.intersectionRatio < 1 &&
+        titleEntry.boundingClientRect.top < 0;
+    },
+    { threshold: 1 },
+  );
+  titleObserver.observe(titleRef.value);
+});
+
+onBeforeUnmount(() => {
+  titleObserver?.disconnect();
+});
 </script>
 
 <template>
@@ -103,6 +127,32 @@ const handleConfirmRemove = async () => {
     v-if="userBook"
     class="flex flex-1 flex-col lg:bg-[linear-gradient(to_right,#EAD3B6_50%,var(--color-bg-default)_50%)]"
   >
+    <div
+      class="fixed inset-x-0 top-0 z-30 border-b border-border-disabled/60 bg-bg-default/80 backdrop-blur-sm transition-[translate,visibility] duration-200 lg:hidden"
+      :class="
+        isTitleScrolledPast
+          ? 'visible translate-y-0'
+          : 'invisible -translate-y-full'
+      "
+    >
+      <div
+        class="page-container grid grid-cols-[1fr_minmax(0,auto)_1fr] items-center pt-3 pb-2.5 md:py-3.5"
+      >
+        <button
+          type="button"
+          @click="goBack"
+          aria-label="返回書庫"
+          class="flex w-11 py-3 pr-3 text-text-nav cursor-pointer md:w-12 md:pt-3.75 md:pr-3.5 md:pb-3.25"
+        >
+          <Icon name="bluette:arrow-left" class="size-5" />
+        </button>
+        <p
+          class="truncate font-sans text-body-md font-medium text-text-default"
+        >
+          {{ userBook.title }}
+        </p>
+      </div>
+    </div>
     <div
       class="flex flex-1 flex-col lg:mx-auto lg:w-full lg:max-w-312 lg:flex-row lg:px-6"
     >
@@ -159,6 +209,7 @@ const handleConfirmRemove = async () => {
             class="flex flex-col w-full py-4 px-8 text-center md:gap-1 md:py-6 lg:pt-6 lg:pb-2.5"
           >
             <h1
+              ref="titleRef"
               class="truncate font-serif text-heading-h6 text-text-default md:text-accent-title"
             >
               {{ userBook.title }}
