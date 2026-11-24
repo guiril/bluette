@@ -21,7 +21,7 @@ const closeMenu = () => {
 const handleLogout = async () => {
   closeMenu();
   await supabase.auth.signOut();
-  await navigateTo('/');
+  await navigateTo('/login');
 };
 
 watch(

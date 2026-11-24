@@ -6,6 +6,9 @@ export default defineNuxtConfig({
   devtools: { enabled: true },
   modules: ['@nuxtjs/supabase', '@nuxt/icon'],
   css: ['~/assets/css/main.css'],
+  routeRules: {
+    '/': { redirect: '/my-books' },
+  },
   vite: {
     plugins: [tailwindcss()],
   },
@@ -54,7 +57,7 @@ export default defineNuxtConfig({
     redirectOptions: {
       login: '/login',
       callback: '/confirm',
-      exclude: ['/', '/signup'],
+      exclude: ['/signup'],
     },
   },
 });

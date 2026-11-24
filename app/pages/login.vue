@@ -1,6 +1,7 @@
 <script setup lang="ts">
 definePageMeta({
   layout: false,
+  middleware: 'guest-only',
 });
 
 const {
@@ -53,9 +54,7 @@ const submitForm = async () => {
     <div
       class="flex w-full flex-1 flex-col gap-14 md:w-97.5 md:flex-none md:gap-16 lg:w-100 lg:gap-18"
     >
-      <NuxtLink to="/" class="w-fit">
-        <AppLogo class="h-8 md:h-10" />
-      </NuxtLink>
+      <AppLogo class="self-start h-8 md:h-10" />
       <div class="flex flex-col gap-6">
         <div class="flex flex-col gap-1.5 md:gap-2 lg:gap-2.5">
           <h1
